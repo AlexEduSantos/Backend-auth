@@ -36,7 +36,7 @@ model Schedule {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
   User           User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId         String?
+  userId         String?  @unique
 }
 
 model Day {
