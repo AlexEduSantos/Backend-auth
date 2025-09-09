@@ -15,6 +15,7 @@ import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import type { Request as ExpressRequest } from 'express';
 import { SessionGuard } from './session.guard';
+import { User } from '@prisma/client';
 
 @Controller('auth')
 export class AuthController {
@@ -24,7 +25,19 @@ export class AuthController {
   @Post('login')
   @HttpCode(HttpStatus.OK)
   async login(@Request() req: ExpressRequest, @Body() loginDto: LoginDto) {
-    return req.user;
+    return new Promise((resolve, reject) => {
+      req.login(req.user as User, (err: Error) => {
+        if (err) {
+          return reject(err);
+        }
+        req.session.save((err: Error) => {
+          if (err) {
+            return reject(err);
+          }
+          resolve(req.user);
+        });
+      });
+    });
   }
 
   @Post('register')
