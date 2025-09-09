@@ -29,6 +29,7 @@ export class ScheduleService {
   async createSchedule(data: CreateScheduleDto, userId: string) {
     try {
       const { days, ...scheduleData } = data;
+      console.log(userId);
 
       return await this.prisma.schedule.create({
         data: {
@@ -51,7 +52,7 @@ export class ScheduleService {
               },
             })),
           },
-          userId,
+          userId: userId,
         },
         include: { days: { include: { topics: true } } },
       });
@@ -68,12 +69,11 @@ export class ScheduleService {
       return await this.prisma.schedule.update({
         where: { id: scheduleId },
         data: {
-          ...updateData,
+          name: updateData.name,
           testDay: new Date(updateData.testDay),
           studyStartDate: new Date(updateData.studyStartDate),
           studyEndDate: new Date(updateData.studyEndDate),
         },
-        include: { days: { include: { topics: true } } },
       });
     } catch (error) {
       console.error('Erro ao atualizar cronograma:', error);

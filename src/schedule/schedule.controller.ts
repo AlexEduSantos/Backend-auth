@@ -41,10 +41,8 @@ export class ScheduleController {
     @Request() req: any,
     @Body() createScheduleDto: CreateScheduleDto,
   ) {
-    return this.scheduleService.createSchedule(
-      createScheduleDto,
-      req.user.userId,
-    );
+    const userId = req.user.id;
+    return this.scheduleService.createSchedule(createScheduleDto, userId);
   }
 
   @Put(':scheduleId')
@@ -52,7 +50,16 @@ export class ScheduleController {
     @Param('scheduleId', new ParseUUIDPipe()) scheduleId: string,
     @Body() updateScheduleDto: UpdateScheduleDto,
   ) {
-    return this.scheduleService.updateSchedule(scheduleId, updateScheduleDto);
+    const updatedSchedule = await this.scheduleService.updateSchedule(
+      scheduleId,
+      updateScheduleDto,
+    );
+
+    return {
+      message: 'Cronograma atualizado com sucesso.',
+      status: 'success',
+      data: updatedSchedule,
+    };
   }
 
   @Delete(':scheduleId')
@@ -60,7 +67,13 @@ export class ScheduleController {
   async deleteSchedule(
     @Param('scheduleId', new ParseUUIDPipe()) scheduleId: string,
   ) {
-    await this.scheduleService.deleteSchedule(scheduleId);
+    const deletedSchedule =
+      await this.scheduleService.deleteSchedule(scheduleId);
+
+    return {
+      message: 'Cronograma excluido com sucesso.',
+      status: 'success',
+    };
   }
 
   // ======================
@@ -85,13 +98,24 @@ export class ScheduleController {
     @Param('dayId', new ParseUUIDPipe()) dayId: string,
     @Body() updateDayDto: CreateDayDto,
   ) {
-    return this.scheduleService.updateDay(dayId, updateDayDto);
+    const updatedDay = this.scheduleService.updateDay(dayId, updateDayDto);
+
+    return {
+      message: 'Dia atualizado com sucesso.',
+      status: 'success',
+      data: updatedDay,
+    };
   }
 
   @Delete('days/:dayId')
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteDay(@Param('dayId', new ParseUUIDPipe()) dayId: string) {
-    await this.scheduleService.deleteDay(dayId);
+    const deletedDay = await this.scheduleService.deleteDay(dayId);
+
+    return {
+      message: 'Dia excluido com sucesso.',
+      status: 'success',
+    };
   }
 
   // ======================
@@ -116,19 +140,40 @@ export class ScheduleController {
     @Param('topicId', new ParseUUIDPipe()) topicId: string,
     @Body() updateTopicDto: CreateTopicDto,
   ) {
-    return this.scheduleService.updateTopic(topicId, updateTopicDto);
+    const updatedTopic = await this.scheduleService.updateTopic(
+      topicId,
+      updateTopicDto,
+    );
+
+    return {
+      message: 'Tópico atualizado com sucesso.',
+      status: 'success',
+      data: updatedTopic,
+    };
   }
 
   @Put('topics/:topicId/status')
   async toggleTopicStatus(
     @Param('topicId', new ParseUUIDPipe()) topicId: string,
   ) {
-    return this.scheduleService.toggleTopicStatus(topicId);
+    const statusUpdateTopic =
+      await this.scheduleService.toggleTopicStatus(topicId);
+
+    return {
+      message: 'Tópico atualizado com sucesso.',
+      status: 'success',
+      data: statusUpdateTopic,
+    };
   }
 
   @Delete('topics/:topicId')
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteTopic(@Param('topicId', new ParseUUIDPipe()) topicId: string) {
-    await this.scheduleService.deleteTopic(topicId);
+    const deletedTopic = await this.scheduleService.deleteTopic(topicId);
+
+    return {
+      message: 'Tópico excluido com sucesso.',
+      status: 'success',
+    };
   }
 }
